@@ -19,6 +19,7 @@ package logger
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"sync"
@@ -94,7 +95,9 @@ func Init(name string, verbose, systemLog bool, logFile io.Writer) *Logger {
 		eLogs = append(eLogs, el)
 	}
 	// Windows services don't have stdout/stderr. Writes will fail, so try them last.
-	eLogs = append(eLogs, os.Stderr)
+	if logFile != ioutil.Discard {
+		eLogs = append(eLogs, os.Stderr)
+	}
 	if verbose {
 		iLogs = append(iLogs, os.Stdout)
 		wLogs = append(wLogs, os.Stdout)
